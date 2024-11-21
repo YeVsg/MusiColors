@@ -376,23 +376,33 @@ function initGUI() {
 }
 
 function initWorld(){
-    loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+    //loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
 
-    // alert("gasolinaaaa");
 }
 
 function goToPlay() {
-    alert("En este momento vamos a iniciar la partida");
+    
     document.getElementById("menuPanel").style.display = "none";
+    document.getElementById('optionsPanel').style.display = "flex";
 
     // Start General Sound
     //document.getElementById("bckSound").play();
 }
 
+/*function selectOption(option){
+    alert("Has seleccionado la opción: " + option);
+    startGame(option);
+}
+
+function startGame(){
+    console.log("Iniciando el escenario: " + option);
+    startScene();
+}*/
+
 function createPlayer(){
     console.log("this is my principal player");
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var geometry = new THREE.BoxGeometry( 1, 5, 1 );
     var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
     myPlayer = new THREE.Mesh( geometry, material );
     myPlayer.position.set(camera.position.x,camera.position.y,camera.position.z);
@@ -401,18 +411,18 @@ function createPlayer(){
 }
 
 function movementPlayer() {
-    if(input.right == 1){ // Camara Rota
-        camera.rotation.y -= rotSpeed;
+    if(input.right == 1.5){ // Camara Rota
+    camera.rotation.y -= rotSpeed;
         myPlayer.rotation.y -= rotSpeed;
-    }else if(input.left == 1){ // Camara Rota
+    }else if(input.left == 1.5){ // Camara Rota
         camera.rotation.y += rotSpeed;
         myPlayer.rotation.y += rotSpeed;
-    }else if(input.up == 1){ // Camara Avanza
+    }else if(input.up == 1.5){ // Camara Avanza
         camera.position.z -= Math.cos(camera.rotation.y) * speed;
         camera.position.x -= Math.sin(camera.rotation.y) * speed;
         myPlayer.position.z -= Math.cos(camera.rotation.y) * speed;
         myPlayer.position.x -= Math.sin(camera.rotation.y) * speed;
-    }else if(input.down == 1){ // Camara Avanza
+    }else if(input.down == 1.5){ // Camara Avanza
         camera.position.z += Math.cos(camera.rotation.y) * speed;
         camera.position.x += Math.sin(camera.rotation.y) * speed;
         myPlayer.position.z += Math.cos(camera.rotation.y) * speed;
@@ -423,19 +433,19 @@ function movementPlayer() {
 window.addEventListener('keydown',function (e) {
     switch (e.keyCode) {
         case 68: // Derecha
-            input.right = 1;
+            input.right = 1.5;
             // console.log("derecha");
         break;
         case 65: // Izquierda
-            input.left = 1;
+            input.left = 1.5;
             // console.log("izquierda");
         break;
         case 87: // Arriba
-            input.up = 1;
+            input.up = 1.5;
             // console.log("arriba");
         break;
         case 83: // Abajo
-            input.down = 1;
+            input.down = 1.5;
             // console.log("abajo");
         break;
     }
