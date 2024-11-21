@@ -19,7 +19,7 @@ var pickup = null,
     points = 0;
 
 var myPlayer = null,
-    input = {left:0, right:0, up:0, down:0},
+    input = { left: 0, right: 0, up: 0, down: 0 },
     rotSpeed = 0.05,
     speed = 0.5;
 
@@ -33,9 +33,9 @@ function initScene() {
     // Scene, Camera, Renderer 
     scene = new THREE.Scene();
     scene.background = new THREE.TextureLoader().load('../src/img/fondoMusica.jpg');
-    scene.fog = new THREE.Fog( 0x505050, 200, 1000 );
+    scene.fog = new THREE.Fog(0x505050, 200, 1000);
 
-    
+
 
     camera = new THREE.PerspectiveCamera(
         75,                                      // Ángulo de visión (abajo o arriba)
@@ -56,38 +56,38 @@ function initScene() {
     // controls = new THREE.OrbitControls(camera, renderer.domElement);
     camera.position.set(-1, 10, 30);
     // controls.update();
-    
+
     // Grid Helper
     const size = 100;
     const divisions = 10;
 
-    const gridHelper = new THREE.GridHelper( size, divisions );
+    const gridHelper = new THREE.GridHelper(size, divisions);
     scene.add(gridHelper);
-    
+
     // Other Code
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
 
-    createLight(0xFFFFFF,1);
+    createLight(0xFFFFFF, 1);
     //initGUI();
     initSound3D();
     createPlayer();
     initWorld();
     createMultiplyPickUps();
-    
+
 }
 
 function initSound3D() {
-    sound3d = new Sound(["./src/songs/rain.mp3"],30,scene,{
-        debug:false,
-        position: {x:0,y:camera.position.y,z:0}
+    sound3d = new Sound(["./src/songs/rain.mp3"], 30, scene, {
+        debug: false,
+        position: { x: 0, y: camera.position.y, z: 0 }
     });
 
     sound3d.play();
 }
 
-function getRandomPosition(min, max){
-    return Math.random()*(max - min) + min;
+function getRandomPosition(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
 function createMultiplyPickUps() {
@@ -96,18 +96,18 @@ function createMultiplyPickUps() {
     myPickUps = [];
 
     const positions = [
-        { x: -30, y: 10, z: 20},
+        { x: -30, y: 10, z: 20 },
         { x: -10, y: 10, z: 20 },
         { x: 20, y: 10, z: 20 },
-        { x: 40, y: 10, z: 20}
+        { x: 40, y: 10, z: 20 }
     ];
-    
+
     positions.forEach(pos => {
         initCollectible(pos.x, pos.z);
     });
 
-        
-    }
+
+}
 
 
 function initCollectible(posX, posZ) {
@@ -118,20 +118,20 @@ function initCollectible(posX, posZ) {
     
     var texture = textureLoader.load("./src/img/uv_test_bw_1024.png");
     var material = new THREE.MeshBasicMaterial( {map: texture} ); */
-    const geometry = new THREE.SphereGeometry( 8, 8, 16 ); 
-    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
+    const geometry = new THREE.SphereGeometry(8, 8, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     //var textureLoader = new THREE.TextureLoader();
-    
-    pickup = new THREE.Mesh( geometry, material );
-    pickup.name = "modelToPick"+Math.floor(Math.random()*101);
-    pickup.position.set(posX, 15, posZ);    
+
+    pickup = new THREE.Mesh(geometry, material);
+    pickup.name = "modelToPick" + Math.floor(Math.random() * 101);
+    pickup.position.set(posX, 15, posZ);
     // pickup.id = "modelToPick"+Math.floor(Math.random()*101);
     /*pickup.position.y = camera.position.y;
     pickup.position.x = posOfCreate;
     pickup.position.z = posOfCreate;
     */
 
-    scene.add( pickup );
+    scene.add(pickup);
     myPickUps.push(pickup);
 
     // Collider Temporal
@@ -140,21 +140,21 @@ function initCollectible(posX, posZ) {
 }
 
 function collisionAnimate() {
-   
+
     var originPoint = myPlayer.position.clone();
 
-    for (var vertexIndex = 0; vertexIndex < myPlayer.geometry.vertices.length; vertexIndex++){  
-    var localVertex = myPlayer.geometry.vertices[vertexIndex].clone();
-    var globalVertex = localVertex.applyMatrix4( myPlayer.matrix );
-    var directionVector = globalVertex.sub( myPlayer.position );
-    
-    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-    var collisionResults = ray.intersectObjects( myPickUps );
-        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()){
-        //         sendToAddAndSubs(collisionResults[0].object.name);
-        //     }else{
-        //     }
-            console.log("take element: "+collisionResults[0].object.name);
+    for (var vertexIndex = 0; vertexIndex < myPlayer.geometry.vertices.length; vertexIndex++) {
+        var localVertex = myPlayer.geometry.vertices[vertexIndex].clone();
+        var globalVertex = localVertex.applyMatrix4(myPlayer.matrix);
+        var directionVector = globalVertex.sub(myPlayer.position);
+
+        var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+        var collisionResults = ray.intersectObjects(myPickUps);
+        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+            //         sendToAddAndSubs(collisionResults[0].object.name);
+            //     }else{
+            //     }
+            console.log("take element: " + collisionResults[0].object.name);
             points++;
             collisionResults[0].object.visible = false;
             document.getElementById("points").innerHTML = points;
@@ -163,12 +163,12 @@ function collisionAnimate() {
 }
 
 function createLight(color, intensidad) {
-    light3 = new THREE.AmbientLight( color, intensidad); // soft white light
-    scene.add( light3 );
+    light3 = new THREE.AmbientLight(color, intensidad); // soft white light
+    scene.add(light3);
 }
 
 function animate() {
-    
+
     requestAnimationFrame(animate);
 
     // required if controls.enableDamping or controls.autoRotate are set to true
@@ -211,7 +211,7 @@ function loadOBJ_MTL(generalPath, pathMTL, pathOBJ) {
 
             modelLoad = object;
             scene.add(object);
-            object.scale.set(10,10,10);
+            object.scale.set(10, 10, 10);
             // object.position.y = 0;
             // object.position.x = 0;
         });
@@ -224,64 +224,64 @@ function loadGLTF() {
 
     // Decodificar el Mesh autocontenido
     var dracoLoader = new THREE.DRACOLoader();
-        dracoLoader.setDecoderPath("./src/modelos/other/");
-        loader.setDRACOLoader( dracoLoader );
+    dracoLoader.setDecoderPath("./src/modelos/other/");
+    loader.setDRACOLoader(dracoLoader);
 
     // Load a glTF resource
     loader.load(
         // resource URL
         './src/modelos/other/duck.gltf',
         // called when the resource is loaded
-        function ( gltf ) {
-    
+        function (gltf) {
+
             modelLoad = gltf;
-            scene.add( gltf.scene );
-                gltf.animations; // Array<THREE.AnimationClip>
-                gltf.scene;   // THREE.Scene
-                gltf.scenes;  // Array<THREE.Scene>
-                gltf.cameras; // Array<THREE.Camera>
-                gltf.asset;   // Object
-                gltf.scene.scale.set(10,10,10) // scale here
-                gltf.scene.rotation.y = -(Math.PI / 2);
-            },
-            
-            // called while loading is progressing
-            function ( xhr ) {
-                console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-            },
-            // called when loading has errors
-            function ( error ) {
-                console.log( 'An error happened' );
-            }
-        );
+            scene.add(gltf.scene);
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene;   // THREE.Scene
+            gltf.scenes;  // Array<THREE.Scene>
+            gltf.cameras; // Array<THREE.Camera>
+            gltf.asset;   // Object
+            gltf.scene.scale.set(10, 10, 10) // scale here
+            gltf.scene.rotation.y = -(Math.PI / 2);
+        },
+
+        // called while loading is progressing
+        function (xhr) {
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        },
+        // called when loading has errors
+        function (error) {
+            console.log('An error happened');
+        }
+    );
 }
 
 function loadFBX(animationToDo) {
-    console.log("load animations "+animationToDo);
+    console.log("load animations " + animationToDo);
 
     //var loader = new THREE.FBXLoader();
 
-     // Inicio de carga y carga asincrónica, no me preguntes, no lo sé, el parámetro en el cuerpo del método es
+    // Inicio de carga y carga asincrónica, no me preguntes, no lo sé, el parámetro en el cuerpo del método es
     //(url,onLoad,onProgress,onError)
     // Tan correspondiente
     // loader.load( './src/modelos/fbx/baseHumanModel.fbx', function ( object ) {
     //     console.log("load content");
     //     //Animación
-        /*object.mixer = new THREE.AnimationMixer( object );
-        mixers.push( object.mixer )；
-        var action = object.mixer.clipAction( object.animations[ 0 ] );
-        action.play();
-        // Um, tal vez la textura, te equivocaste, por favor indícalo
-        object.traverse( function ( child ) {
+    /*object.mixer = new THREE.AnimationMixer( object );
+    mixers.push( object.mixer )；
+    var action = object.mixer.clipAction( object.animations[ 0 ] );
+    action.play();
+    // Um, tal vez la textura, te equivocaste, por favor indícalo
+    object.traverse( function ( child ) {
 
-            if ( child.isMesh ) {
+        if ( child.isMesh ) {
 
-                child.castShadow = true;
-                child.receiveShadow = true;
+            child.castShadow = true;
+            child.receiveShadow = true;
 
-    //         }
+//         }
 
-    //     } );*/
+//     } );*/
 
     //     scene.add( object );
 
@@ -291,7 +291,7 @@ function loadFBX(animationToDo) {
 }
 
 function initGUI() {
-    
+
     var gui = new dat.GUI();
     var param = {
         a: "None",     // Select the models to load
@@ -300,7 +300,7 @@ function initGUI() {
         d: 1,           // Slider de intensidad
         e: "None"
     };
-    
+
     // parametros
     var modelLoadGUI = gui.add(param, "a", ["None", "OBJ Male", "OBJ Chica", "OBJ Mario", "OBJ Luigi", "GLTF Duck", "FBX"]).name("3D Model");
     var showMayaLoadGUI = gui.add(param, "b").name("Show Model");
@@ -308,13 +308,13 @@ function initGUI() {
     var colorIntesity = gui.add(param, "d").min(0).max(5).step(0.1).name("Intensity light");
 
     //var animation = gui.addFolder( 'Base Actions', "e" );
-        
+
     var animation = gui.add(param, "e", ["None", "Idle", "Run"]).name("Animations FBX");
 
 
     // Load model by Selection
     modelLoadGUI.onChange(function (model) {
-    scene.remove(modelLoad);
+        scene.remove(modelLoad);
         // switch (model) {
         //     case 'OBJ Male':
         //         var routeContent = './src/modelos/obj/male02/';
@@ -322,7 +322,7 @@ function initGUI() {
         //         var fileOBJ = "male02.obj";
         //         loadOBJ_MTL(routeContent,fileMTL,fileOBJ);
         //     break;
-        
+
         //     case 'OBJ Chica':
         //         var routeContent = './src/modelos/obj/female02/';
         //         var fileMTL = "female02.mtl";
@@ -351,78 +351,100 @@ function initGUI() {
     });
 
     // true/false
-    showMayaLoadGUI.onChange(function(model) {
+    showMayaLoadGUI.onChange(function (model) {
         modelLoad.visible = model;
     });
 
     // Color de la Luz
-    colorGUI.onChange(function(model){
+    colorGUI.onChange(function (model) {
 
         scene.remove(light3);
 
-        modelColor = +(model.replace("#","0x"));
-        createLight(modelColor,1);
+        modelColor = +(model.replace("#", "0x"));
+        createLight(modelColor, 1);
 
         colorIntesity.onChange(function (model) {
             scene.remove(light3);
-            createLight(+(modelColor),model);
+            createLight(+(modelColor), model);
         });
     });
 
 
     animation.onChange(function (model) {
-            loadFBX(model);
-        });
+        loadFBX(model);
+    });
 }
 
-function initWorld(){
-    //loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+function initWorld(typeWorld) {
+
+    switch (typeWorld) {
+        case "red":
+            loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+        break;
+        case "green":
+            loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+        break;
+    }
 
 }
 
 function goToPlay() {
-    
     document.getElementById("menuPanel").style.display = "none";
     document.getElementById('optionsPanel').style.display = "flex";
-
     // Start General Sound
     //document.getElementById("bckSound").play();
 }
 
-/*function selectOption(option){
-    alert("Has seleccionado la opción: " + option);
-    startGame(option);
+function selectOption(status) {
+
+    switch (status) {
+        case 'opt1':
+            initWorld("red");
+            break;
+        case 'opt2':
+            initWorld("green");
+            break;
+        case 'opt3':
+
+            break;
+        case 'opt4':
+
+            break;
+    }
+
+    document.getElementById('optionsPanel').style.display = "none";
+
 }
 
-function startGame(){
+/*function startGame(){
     console.log("Iniciando el escenario: " + option);
     startScene();
 }*/
 
-function createPlayer(){
+function createPlayer() {
     console.log("this is my principal player");
 
-    var geometry = new THREE.BoxGeometry( 1, 5, 1 );
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-    myPlayer = new THREE.Mesh( geometry, material );
-    myPlayer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    
-    scene.add( myPlayer );
+    var geometry = new THREE.BoxGeometry(1, 5, 1);
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    myPlayer = new THREE.Mesh(geometry, material);
+    myPlayer.position.set(camera.position.x, camera.position.y, camera.position.z);
+
+    scene.add(myPlayer);
 }
 
 function movementPlayer() {
-    if(input.right == 1.5){ // Camara Rota
-    camera.rotation.y -= rotSpeed;
+    if (input.right == 1.5) { // Camara Rota
+        camera.rotation.y -= rotSpeed;
         myPlayer.rotation.y -= rotSpeed;
-    }else if(input.left == 1.5){ // Camara Rota
+    } else if (input.left == 1.5) { // Camara Rota
         camera.rotation.y += rotSpeed;
         myPlayer.rotation.y += rotSpeed;
-    }else if(input.up == 1.5){ // Camara Avanza
+    } else if (input.up == 1.5) { // Camara Avanza
         camera.position.z -= Math.cos(camera.rotation.y) * speed;
         camera.position.x -= Math.sin(camera.rotation.y) * speed;
         myPlayer.position.z -= Math.cos(camera.rotation.y) * speed;
         myPlayer.position.x -= Math.sin(camera.rotation.y) * speed;
-    }else if(input.down == 1.5){ // Camara Avanza
+    } else if (input.down == 1.5) { // Camara Avanza
         camera.position.z += Math.cos(camera.rotation.y) * speed;
         camera.position.x += Math.sin(camera.rotation.y) * speed;
         myPlayer.position.z += Math.cos(camera.rotation.y) * speed;
@@ -430,40 +452,40 @@ function movementPlayer() {
     }
 }
 
-window.addEventListener('keydown',function (e) {
+window.addEventListener('keydown', function (e) {
     switch (e.keyCode) {
         case 68: // Derecha
             input.right = 1.5;
             // console.log("derecha");
-        break;
+            break;
         case 65: // Izquierda
             input.left = 1.5;
             // console.log("izquierda");
-        break;
+            break;
         case 87: // Arriba
             input.up = 1.5;
             // console.log("arriba");
-        break;
+            break;
         case 83: // Abajo
             input.down = 1.5;
             // console.log("abajo");
-        break;
+            break;
     }
 });
 
-window.addEventListener('keyup',function (e) {
+window.addEventListener('keyup', function (e) {
     switch (e.keyCode) {
         case 68: // Derecha
             input.right = 0;
-        break;
+            break;
         case 65: // Izquierda
             input.left = 0;
-        break;
+            break;
         case 87: // Arriba
             input.up = 0;
-        break;
+            break;
         case 83: // Abajo
             input.down = 0;
-        break;
+            break;
     }
 });

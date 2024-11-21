@@ -54,25 +54,31 @@
     <div id="container"></div>
 
     <!--Panel Start Game-->
+
     <div id="menuPanel">
+
         <div id="instructions">
+
             <span onclick="goToPlay()" style="font-size:36px">Click to play</span>
             <br /><br />
-            Move: WASD<br/>
-            <br/>
+            Move: WASD<br />
+            <br />
             Look: MOUSE
-        </div>    
+        </div>
+
     </div>
 
     <div id="optionsPanel">
-        
+
         <h2>Elige una opción:</h2>
-        <span onclick="goToPlay()">Opción 1</span>
-        <button onclick="selectOption('Opción 2')">Opción 2</button>
-        <button onclick="selectOption('Opción 3')">Opción 3</button>
-        <button onclick="selectOption('Opción 4')">Opción 4</button>
-    
+        <button onclick="selectOption('opt1')">Opción 1</button>
+        <button onclick="selectOption('opt2')">Opción 2</button>
+        <button onclick="selectOption('opt3')">Opción 3</button>
+        <button onclick="selectOption('opt4')">Opción 4</button>
+
     </div>
+
+
 
     <!-- Canvas Points -->
     <div id="PanelPoints">
@@ -86,4 +92,5 @@
     <!--Panel Lost-->
     <div id="LostPanel" style="display: none;"></div>
 </body>
+
 </html>
