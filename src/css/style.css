@@ -1,116 +1,128 @@
-
 body {
     margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+    background-color: #000; 
+    color: #fff; 
+    
 }
 
-#app{
+#app {
     width: 100%;
     height: 100%;
 }
 
-#PanelPoints{
-    position: absolute;
-    margin-left: 50%;
-    background-color: white;
-    font-size: x-large;
+/* Contenedor del título */
+#titlePanel {
+    position: relative; 
+    text-align: center; 
+    margin: 20px auto; /* Espacio superior e inferior */
+    
 }
 
-#menuPanel{
-    width: 100%;
-    height: 100%;
+/* Estilo del título */
+.mainTitle {
+    font-family: 'Outfit', sans-serif; /* Aplica la fuente */
+    font-size: 46px; 
+    font-weight: bold; 
+    color: #fff; 
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Sombra negra */
+    margin: 0; 
+    
+}
 
-    background-color:#5e0078;
-    position: absolute;
+#menuPanel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    background-image: url("../img/FondoInicio.png"); 
+    background-size: cover;
+    background-position: center; 
     color: white;
-    /* cursor: pointer; */
-    box-align: center;
     text-align: center;
+    
+}
 
-    display: -webkit-box;
-	display: -moz-box;
-	display: box;
+#instructions {
+    position: fixed;
+    text-align: center;
+    padding: 20px;
+    border: 2px solid #fff; 
+    border-radius: 15px; 
+    background-color: rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+}
 
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	box-orient: horizontal;
+/* Botón de juego */
+.playButton {
+    display: inline-block; 
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+    background-color: transparent; 
+    border: 2px solid #fff; 
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+}
 
-	-webkit-box-pack: center;
-	-moz-box-pack: center;
-	box-pack: center;
+.playButton:hover {
+    background-color: #fff; 
+    color: #000; 
+    transform: scale(1.1); 
+}
 
-	-webkit-box-align: center;
-	-moz-box-align: center;
-	box-align: center;
-
+/* Panel de opciones */
+#optionsPanel {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    gap: 20px; 
+    width: 100%; 
+    height: 100%; 
+    background-image: url("../img/FondoInicio.png"); 
+    background-size: cover; 
+    background-position: center; 
+    position: absolute;
     z-index: 5;
 }
 
-#optionsPanel {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #dbdbdb;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+
+.optionBtn {
+    width: 100px;
+    height: 100px;
+    border: none;
+    border-radius: 50%; 
+    cursor: pointer;
+    transition: all 0.3s ease; 
 }
 
-#WinPanel{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url("../img/backgroundWinner.jpg");
-    background-size: cover;
-    background-position: center;
-    z-index: 5!important;
+#opt1 {
+    background-color: red; 
 }
 
-#LostPanel{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url("../img/backgroundLost.jpg");
-    background-size: cover;
-    background-position: center;
-    z-index: 5!important;
+#opt2 {
+    background-color: black; 
 }
 
-#instructions{
-        width: 100%;
-        height: 100%;
-    
-        display: -webkit-box;
-        display: -moz-box;
-        display: box;
-    
-        -webkit-box-orient: horizontal;
-        -moz-box-orient: horizontal;
-        box-orient: horizontal;
-    
-        -webkit-box-pack: center;
-        -moz-box-pack: center;
-        box-pack: center;
-    
-        -webkit-box-align: center;
-        -moz-box-align: center;
-        box-align: center;
-    
-        color: #ffffff;
-        text-align: center;
-    
-        cursor: pointer;
+#opt3 {
+    background-color: green; 
 }
+
+
+.optionBtn:hover {
+    transform: scale(1.1); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
+
+
 
 #container {
     position: relative;
 }
-  
+
 #container > div {
-    position: absolute;  
+    position: absolute;
 }

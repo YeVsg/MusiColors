@@ -22,14 +22,96 @@ var myPlayer = null,
     input = { left: 0, right: 0, up: 0, down: 0 },
     rotSpeed = 0.05,
     speed = 0.5;
+    collidableMeshList = [];
 
 // Inicializar la scene
 function startScene() {
-    initScene();
+    initScene("red");
+    initScene2("black");
+    initScene3("green")
     animate();
 }
 
 function initScene() {
+    // Scene, Camera, Renderer 
+    scene = new THREE.Scene();
+    scene.background = new THREE.TextureLoader().load('../src/img/fondo_rojo2.jpg');
+    scene.fog = new THREE.Fog(0x505050, 200, 1000);
+    
+
+
+
+    camera = new THREE.PerspectiveCamera(
+        75,                                      // Ángulo de visión (abajo o arriba)
+        window.innerWidth / window.innerHeight,  // Relación de aspecto 16:9
+        0.1,                                     // Mas cerca (no renderiza)
+        1000);                                   // Mas lejos (no renderiza)
+
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('app') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const container = document.getElementById('container');
+
+    stats = new Stats();
+    container.appendChild(stats.domElement);
+
+    // Controls
+    // controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(-1, 10, 30);
+    // controls.update();
+    gridWidth = 200;
+    gridDivisions = 10;
+
+    // Grid Helper
+    const gridHelper = new THREE.GridHelper(gridWidth, gridDivisions);
+    gridHelper.rotation.y = Math.PI / 2; // Rota el grid para que esté en la posición horizontal
+    //scene.add(gridHelper);
+
+    // Other Code
+    const axesHelper = new THREE.AxesHelper(5);
+    //scene.add(axesHelper);
+
+    const soundConfigs = [
+        { position: { x: 60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[4]},
+        { position: { x: -60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[1] },
+        { position: { x: -60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[2] },
+        {position: { x: 60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[3] }
+    ];
+    
+    soundConfigs.forEach(config => {
+        initSound3D(config.position, config.range, config.soundFile);
+    });
+
+    
+    const geometry = new THREE.PlaneGeometry( 200, 200 );
+
+    const texturePlano = new THREE.TextureLoader().load('../src/img/AlfombraR.jpg');
+
+    const material = new THREE.MeshStandardMaterial( { 
+                                                    side: THREE.DoubleSide,
+                                                    map: texturePlano, 
+                                                    color: 0x7d7f7d, // White color, ensuring no color multiplication
+                                                    transparent: false} );
+
+    const plane = new THREE.Mesh( geometry, material );
+    plane.rotateX(90*(Math.PI)/180);
+    scene.add( plane );
+
+    createLight('ambient');
+    //initGUI();
+        
+    createPlayer();
+    initWorld("red");
+    initWorld("red2");
+    initWorld("red3");
+    initWorld("red4");
+    //createMultiplyPickUps();
+    createFrontera()
+
+}
+
+function initScene2() {
     // Scene, Camera, Renderer 
     scene = new THREE.Scene();
     scene.background = new THREE.TextureLoader().load('../src/img/fondoMusica.jpg');
@@ -58,33 +140,212 @@ function initScene() {
     // controls.update();
 
     // Grid Helper
-    const size = 100;
+    const size = 200;
     const divisions = 10;
 
     const gridHelper = new THREE.GridHelper(size, divisions);
-    scene.add(gridHelper);
+    //scene.add(gridHelper);
 
     // Other Code
     const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
+    //scene.add(axesHelper);
 
     createLight(0xFFFFFF, 1);
-    //initGUI();
-    initSound3D();
-    createPlayer();
-    initWorld();
-    createMultiplyPickUps();
 
-}
 
-function initSound3D() {
-    sound3d = new Sound(["./src/songs/rain.mp3"], 30, scene, {
-        debug: false,
-        position: { x: 0, y: camera.position.y, z: 0 }
+    const soundConfigs = [
+        { position: { x: 60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[7] },
+        { position: { x: -60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[5]},
+        { position: { x: -60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[6] },
+        {position: { x: 60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[8] }
+    ];
+    
+    soundConfigs.forEach(config => {
+        initSound3D(config.position, config.range, config.soundFile);   
     });
 
-    sound3d.play();
+    const geometry = new THREE.PlaneGeometry( 200, 200 );
+
+    const texturePlano = new THREE.TextureLoader().load('../src/img/alNegro.png');
+
+    const material = new THREE.MeshStandardMaterial( { 
+                                                    side: THREE.DoubleSide,
+                                                    map: texturePlano, 
+                                                    color: 0x7d7f7d, // White color, ensuring no color multiplication
+                                                    transparent: false} );
+
+    const plane = new THREE.Mesh( geometry, material );
+    plane.rotateX(90*(Math.PI)/180);
+    scene.add( plane );
+
+    
+    //initGUI();
+    
+    createPlayer();
+    initWorld2("black");
+    initWorld2("black2");
+    initWorld2("black3");
+    initWorld2("black4");
+    //createMultiplyPickUps();
+    createFrontera();
+
+
 }
+
+function initScene3() {
+    // Scene, Camera, Renderer 
+    scene = new THREE.Scene();
+    scene.background = new THREE.TextureLoader().load('../src/img/fondoVerde.png');
+    scene.fog = new THREE.Fog(0x505050, 200, 1000);
+
+
+
+    camera = new THREE.PerspectiveCamera(
+        75,                                      // Ángulo de visión (abajo o arriba)
+        window.innerWidth / window.innerHeight,  // Relación de aspecto 16:9
+        0.1,                                     // Mas cerca (no renderiza)
+        1000);                                   // Mas lejos (no renderiza)
+
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('app') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const container = document.getElementById('container');
+
+    stats = new Stats();
+    container.appendChild(stats.domElement);
+
+    // Controls
+    // controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(-1, 10, 30);
+    // controls.update();
+
+    // Grid Helper
+    const size = 200;
+    const divisions = 10;
+
+    const gridHelper = new THREE.GridHelper(size, divisions);
+    //scene.add(gridHelper);
+
+    // Other Code
+    const axesHelper = new THREE.AxesHelper(5);
+    //scene.add(axesHelper);
+
+    createLight(0xFFFFFF, 1);
+
+
+    const soundConfigs = [
+        { position: { x: 60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[12] },
+        { position: { x: -60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[9]},
+        { position: { x: -60, y: 10, z: 60 }, range: 40, soundFile: soundFiles[10] },
+        {position: { x: 60, y: 10, z: -60 }, range: 40, soundFile: soundFiles[11] }
+    ];
+    
+    soundConfigs.forEach(config => {
+        initSound3D(config.position, config.range, config.soundFile);   
+    });
+
+    const geometry = new THREE.PlaneGeometry( 200, 200 );
+
+    const texturePlano = new THREE.TextureLoader().load('../src/img/pasto.jpg');
+
+    const material = new THREE.MeshStandardMaterial( { 
+                                                    side: THREE.DoubleSide,
+                                                    map: texturePlano, 
+                                                    color: 0x7d7f7d, // White color, ensuring no color multiplication
+                                                    transparent: false} );
+
+    const plane = new THREE.Mesh( geometry, material );
+    plane.rotateX(90*(Math.PI)/180);
+    scene.add( plane );
+
+    
+    //initGUI();
+    
+    createPlayer();
+    initWorld3("green");
+    initWorld3("green2");
+    initWorld3("green3");
+    initWorld3("green4");
+    //createMultiplyPickUps();
+    createFrontera();
+
+
+}
+
+const soundFiles = [
+    "./src/songs/rain.mp3",
+    "./src/songs/ROSALÍA-SAOKO.mp3",
+    "./src/songs/Te_Olvidaste.mp3",
+    "./src/songs/Bailando Solo.mp3",
+    "./src/songs/Borderline.mp3",
+    "./src/songs/Come to Life.mp3",
+    "./src/songs/Brianstorm.mp3",
+    "./src/songs/DaddyIssues.mp3",
+    "./src/songs/So What.mp3",
+    "./src/songs/365.mp3",
+    "./src/songs/que.mp3",
+    "./src/songs/Hola Como Vas.mp3",
+    "./src/songs/Meetm.mp3"
+    
+]
+
+let sound3dInstances = []; // Arreglo para almacenar múltiples instancias de sonido
+
+function initSound3D(position, range, soundFile) {
+    // Validar parámetros
+    if (!position || !range || !soundFile) {
+        console.error("Se requieren 'position' y 'range' para inicializar el sonido 3D.");
+        return;
+    }
+
+    // Crear una nueva instancia de sonido con configuración correcta
+    const sound3d = new Sound([soundFile], range, scene, {
+        debug: true,
+        position: position // Pasar directamente el objeto {x, y, z}
+    });
+
+    // Reproducir sonido
+    sound3d.play();
+    console.log(`Sonido inicializado en posición: (${position.x}, ${position.y}, ${position.z}) con rango: ${range} y sonido: ${soundFile}`);
+    
+    // Almacenar la instancia en el arreglo
+    sound3dInstances.push(sound3d);
+}
+
+function createlight(typeLight){
+
+    switch(typeLight) {
+        
+      case 'ambient':
+      
+        mylight = new THREE.AmbientLight( 0xFFFFFF, 1); // soft white light
+        scene.add( mylight );
+      break;
+  
+      case 'directionalLight':
+        mylight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+        scene.add( mylight );
+      break;
+  
+      case 'pointLight':
+        mylight= new THREE.PointLight( 0xffffff, 10, 100);
+        mylight.position.set( 0, 5, 6 );
+        scene.add( mylight );
+  
+        const sphereSize = 2;
+        const pointLightHelper = new THREE.PointLightHelper( mylight, sphereSize );
+        scene.add( pointLightHelper );
+      break;
+  
+      case 'spot':
+        mylight = new THREE.Spotmylight( 0xffffff );
+        mylight.position.set( 10, 10, 10 );
+  
+        scene.add( mylight );
+      break;
+    }
+  }
 
 function getRandomPosition(min, max) {
     return Math.random() * (max - min) + min;
@@ -173,7 +434,12 @@ function animate() {
 
     // required if controls.enableDamping or controls.autoRotate are set to true
     // controls.update();
-    sound3d.update(camera);
+     // Llamar a update para cada instancia de sonido
+     sound3dInstances.forEach(sound => {
+        if (sound) {
+            sound.update(camera);
+        }
+    });
     movementPlayer();
     renderer.render(scene, camera);
     stats.update();
@@ -196,7 +462,11 @@ function animate() {
     })*/
 }
 
-function loadOBJ_MTL(generalPath, pathMTL, pathOBJ) {
+function degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+function loadOBJ_MTL(generalPath, pathMTL, pathOBJ, position = { x: 0, y: 0, z: 0 }, rotation = { x: 0, y: 0, z: 0 }) {
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.setTexturePath(generalPath);
     mtlLoader.setPath(generalPath);
@@ -211,10 +481,22 @@ function loadOBJ_MTL(generalPath, pathMTL, pathOBJ) {
 
             modelLoad = object;
             scene.add(object);
-            object.scale.set(10, 10, 10);
-            // object.position.y = 0;
-            // object.position.x = 0;
+            object.scale.set(12, 12, 12);
+            
+            // Modifica la posición según el parámetro `position`
+            object.position.set(position.x, position.y, position.z);
+            object.rotation.set(
+                degreesToRadians(rotation.x),
+                degreesToRadians(rotation.y),
+                degreesToRadians(rotation.z)
+            );
+
+        }, undefined, function (error) {
+            console.error('Error loading OBJ:', error);
         });
+    }, undefined, function (error) {
+        console.error('Error loading MTL:', error);
+    
     });
 }
 
@@ -252,137 +534,87 @@ function loadGLTF() {
         // called when loading has errors
         function (error) {
             console.log('An error happened');
-        }
+        }   
     );
 }
 
-function loadFBX(animationToDo) {
-    console.log("load animations " + animationToDo);
-
-    //var loader = new THREE.FBXLoader();
-
-    // Inicio de carga y carga asincrónica, no me preguntes, no lo sé, el parámetro en el cuerpo del método es
-    //(url,onLoad,onProgress,onError)
-    // Tan correspondiente
-    // loader.load( './src/modelos/fbx/baseHumanModel.fbx', function ( object ) {
-    //     console.log("load content");
-    //     //Animación
-    /*object.mixer = new THREE.AnimationMixer( object );
-    mixers.push( object.mixer )；
-    var action = object.mixer.clipAction( object.animations[ 0 ] );
-    action.play();
-    // Um, tal vez la textura, te equivocaste, por favor indícalo
-    object.traverse( function ( child ) {
-
-        if ( child.isMesh ) {
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-
-//         }
-
-//     } );*/
-
-    //     scene.add( object );
-
-    // } );
-
-
-}
-
-function initGUI() {
-
-    var gui = new dat.GUI();
-    var param = {
-        a: "None",     // Select the models to load
-        b: true,       // ¿Wireframe?
-        c: "#FF00FF",  // Color de la Luz
-        d: 1,           // Slider de intensidad
-        e: "None"
-    };
-
-    // parametros
-    var modelLoadGUI = gui.add(param, "a", ["None", "OBJ Male", "OBJ Chica", "OBJ Mario", "OBJ Luigi", "GLTF Duck", "FBX"]).name("3D Model");
-    var showMayaLoadGUI = gui.add(param, "b").name("Show Model");
-    var colorGUI = gui.addColor(param, "c").name("Color Light");
-    var colorIntesity = gui.add(param, "d").min(0).max(5).step(0.1).name("Intensity light");
-
-    //var animation = gui.addFolder( 'Base Actions', "e" );
-
-    var animation = gui.add(param, "e", ["None", "Idle", "Run"]).name("Animations FBX");
-
-
-    // Load model by Selection
-    modelLoadGUI.onChange(function (model) {
-        scene.remove(modelLoad);
-        // switch (model) {
-        //     case 'OBJ Male':
-        //         var routeContent = './src/modelos/obj/male02/';
-        //         var fileMTL = "male02.mtl";
-        //         var fileOBJ = "male02.obj";
-        //         loadOBJ_MTL(routeContent,fileMTL,fileOBJ);
-        //     break;
-
-        //     case 'OBJ Chica':
-        //         var routeContent = './src/modelos/obj/female02/';
-        //         var fileMTL = "female02.mtl";
-        //         var fileOBJ = "female02.obj";
-        //         loadOBJ_MTL(routeContent,fileMTL,fileOBJ);
-        //     break;
-
-        //     case 'OBJ Mario':
-        //         var routeContent = './src/modelos/obj/MarioandLuigi/';
-        //         var fileMTL = "mario_obj.mtl";
-        //         var fileOBJ = "mario_obj.obj";
-        //         loadOBJ_MTL(routeContent,fileMTL,fileOBJ);
-        //     break;
-
-        //     case 'OBJ Luigi':
-        //         var routeContent = './src/modelos/obj/MarioandLuigi/';
-        //         var fileMTL = "Luigi_obj.mtl";
-        //         var fileOBJ = "Luigi_obj.obj";
-        //         loadOBJ_MTL(routeContent,fileMTL,fileOBJ);
-        //     break;
-
-        //     case 'GLTF Duck':
-        //         loadGLTF();
-        //     break;
-        // }
-    });
-
-    // true/false
-    showMayaLoadGUI.onChange(function (model) {
-        modelLoad.visible = model;
-    });
-
-    // Color de la Luz
-    colorGUI.onChange(function (model) {
-
-        scene.remove(light3);
-
-        modelColor = +(model.replace("#", "0x"));
-        createLight(modelColor, 1);
-
-        colorIntesity.onChange(function (model) {
-            scene.remove(light3);
-            createLight(+(modelColor), model);
-        });
-    });
-
-
-    animation.onChange(function (model) {
-        loadFBX(model);
-    });
-}
 
 function initWorld(typeWorld) {
 
     switch (typeWorld) {
         case "red":
-            loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+            loadOBJ_MTL(
+                "./src/modelos/Gasolinera/", 
+                "gasStation.mtl", 
+                "gasStation.obj", 
+                { x: -60, y: 0, z: -60 } 
+            );
+            break;
+            
+        case "red2":
+            loadOBJ_MTL("./src/modelos/El_madrileño/", "el madrileño.mtl", "el madrileño.obj", {x:-60, y:0, z:60}, {x:0, y:180, z:0});
         break;
+
+        case "red3":
+            loadOBJ_MTL("./src/modelos/LVDLL/", "the bunkers.mtl", "the bunkers.obj", {x:60, y:0, z:-60}, {x:0, y:-90, z:0});
+        break;
+
+        case "red4":
+            loadOBJ_MTL("./src/modelos/TSR/", "the slow rush.mtl", "the slow rush.obj", {x:60, y:0, z:60}, {x:0, y:180, z:0});
+        break;
+    }
+
+}
+
+function initWorld2(typeWorld2) {
+
+    switch (typeWorld2) {
+        case "black":
+            loadOBJ_MTL(
+                "./src/modelos/Donda/", 
+                "donda.mtl", 
+                "donda.obj", 
+                { x: -60, y: 0, z: -60 } 
+            );
+            break;
+            
+        case "black2":
+            loadOBJ_MTL("./src/modelos/FWN/", "favorite worst nightmare.mtl", "favorite worst nightmare.obj", {x:-60, y:0, z:60}, {x:0, y:180, z:0});
+        break;
+
+        case "black3":
+            loadOBJ_MTL("./src/modelos/LYT/", "Love yourself tear.mtl", "Love yourself tear.obj", {x:60, y:0, z:-60}, {x:0, y:0, z:0});
+        break;
+
+        case "black4":
+            loadOBJ_MTL("./src/modelos/wo/", "wiped out.mtl", "wiped out.obj", {x:60, y:0, z:60}, {x:0, y:180, z:0});
+        break;
+    }
+
+}
+
+function initWorld3(typeWorld3) {
+
+    switch (typeWorld3) {
         case "green":
-            loadOBJ_MTL("./src/modelos/Gasolinera/", "gasStation.mtl", "gasStation.obj" );
+            loadOBJ_MTL(
+                "./src/modelos/Brat/", 
+                "Brat.mtl", 
+                "Brat.obj", 
+                { x: -60, y: 0, z: -60 } 
+            );
+            break;
+            
+        case "green2":
+            loadOBJ_MTL("./src/modelos/Golden/", "Golden.mtl", "Golden.obj", {x:-60, y:0, z:60}, {x:0, y:180, z:0});
+        break;
+
+        case "green3":
+            loadOBJ_MTL("./src/modelos/sauceboyz/", "sauceboyz.mtl", "sauceboyz.obj", {x:60, y:0, z:-60}, {x:0, y:0, z:0});
+        break;
+
+        case "green4":
+            loadOBJ_MTL("./src/modelos/theEnd/", "THE E.N.mtl", "THE E.N.obj", {x:60, y:0, z:60}, {x:0, y:180, z:0});
         break;
     }
 
@@ -399,13 +631,13 @@ function selectOption(status) {
 
     switch (status) {
         case 'opt1':
-            initWorld("red");
+            initScene("red");
             break;
         case 'opt2':
-            initWorld("green");
+            initScene2("black");
             break;
         case 'opt3':
-
+            initScene3("green");
             break;
         case 'opt4':
 
@@ -416,40 +648,82 @@ function selectOption(status) {
 
 }
 
-/*function startGame(){
-    console.log("Iniciando el escenario: " + option);
-    startScene();
-}*/
 
 function createPlayer() {
     console.log("this is my principal player");
 
-    var geometry = new THREE.BoxGeometry(1, 5, 1);
+    var geometry = new THREE.BoxGeometry(0, 5, 0);
     var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     myPlayer = new THREE.Mesh(geometry, material);
-    myPlayer.position.set(camera.position.x, camera.position.y, camera.position.z);
+    myPlayer.position.set(1, 5, 1);
 
     scene.add(myPlayer);
 }
 
+function createFrontera() {
+    var cubeGeometry = new THREE.BoxGeometry(200, 50, 200,1 ,1 ,1);
+    var wireMaterial = new THREE.MeshBasicMaterial({
+        
+        color: 0xc20000,
+        wireframe: false,
+        transparent: false,
+    });
+    worldWalls = new THREE.Mesh(cubeGeometry, wireMaterial);
+    worldWalls.position.set(0, 25, 0);
+    scene.add(worldWalls);
+
+    // Crea un BoundingBox desde el objeto
+    worldWalls.geometry.computeBoundingBox();
+    
+}
+
+function checkCollisionWithBoundary(player) {
+    // BoundingBox del jugador
+    var playerBox = new THREE.Box3().setFromObject(player);
+
+    // BoundingBox de los límites ya precomputados
+    var boundaryBox = new THREE.Box3().setFromObject(worldWalls);
+
+    // Comprueba la intersección
+    return !boundaryBox.containsBox(playerBox);
+}
+
 function movementPlayer() {
-    if (input.right == 1.5) { // Camara Rota
+    var originalPosition = myPlayer.position.clone();
+
+    // Calcula nueva posición según la entrada
+    if (input.right) {
         camera.rotation.y -= rotSpeed;
         myPlayer.rotation.y -= rotSpeed;
-    } else if (input.left == 1.5) { // Camara Rota
+    } else if (input.left) {
         camera.rotation.y += rotSpeed;
         myPlayer.rotation.y += rotSpeed;
-    } else if (input.up == 1.5) { // Camara Avanza
-        camera.position.z -= Math.cos(camera.rotation.y) * speed;
-        camera.position.x -= Math.sin(camera.rotation.y) * speed;
-        myPlayer.position.z -= Math.cos(camera.rotation.y) * speed;
+    } else if (input.up) {
         myPlayer.position.x -= Math.sin(camera.rotation.y) * speed;
-    } else if (input.down == 1.5) { // Camara Avanza
-        camera.position.z += Math.cos(camera.rotation.y) * speed;
-        camera.position.x += Math.sin(camera.rotation.y) * speed;
-        myPlayer.position.z += Math.cos(camera.rotation.y) * speed;
+        myPlayer.position.z -= Math.cos(camera.rotation.y) * speed;
+        camera.position.x -= Math.sin(camera.rotation.y) * speed;
+        camera.position.z -= Math.cos(camera.rotation.y) * speed;
+    } else if (input.down) {
         myPlayer.position.x += Math.sin(camera.rotation.y) * speed;
+        myPlayer.position.z += Math.cos(camera.rotation.y) * speed;
+        camera.position.x += Math.sin(camera.rotation.y) * speed;
+        camera.position.z += Math.cos(camera.rotation.y) * speed;
     }
+
+     // Si el jugador se sale de los límites, restaura su posición original
+     if (checkCollisionWithBoundary(myPlayer)) {
+        myPlayer.position.copy(originalPosition);
+        camera.position.z = myPlayer.position.z + 1; // Ajusta para mantener la cámara en sincronización
+        camera.position.x = myPlayer.position.x - 1;
+    }   
+}
+
+function showInfoCreator() {
+    if( document.getElementById("myNameInfo").style.display == "none")
+        document.getElementById("myNameInfo").style.display = "block";
+    else
+        document.getElementById("myNameInfo").style.display = "none";
+
 }
 
 window.addEventListener('keydown', function (e) {
@@ -489,3 +763,4 @@ window.addEventListener('keyup', function (e) {
             break;
     }
 });
+

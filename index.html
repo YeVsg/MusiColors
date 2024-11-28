@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
     <title>MusiColors</title>
     <link rel="icon" href="./src/img/myIcon.png">
 
@@ -48,43 +49,90 @@
         <source src="./src/songs/rain.mp3" type="audio/mpeg">
     </audio> -->
 
-    <audio id="bckSound" src="./src/songs/backgroundSound.mp3"></audio>
+    
 
     <canvas id="app"></canvas> <!-- Se representa todo lo correspondiente con THREE JS-->
     <div id="container"></div>
 
+
     <!--Panel Start Game-->
 
+    <div id="titlePanel">
+        <h1 class="mainTitle">Recorrido Musical</h1>
+    </div>
+    
     <div id="menuPanel">
-
         <div id="instructions">
-
-            <span onclick="goToPlay()" style="font-size:36px">Click to play</span>
-            <br /><br />
-            Move: WASD<br />
-            <br />
-            Look: MOUSE
+            <span class="playButton" onclick="goToPlay()">Click to play</span>
+            <div class="instructionsText">
+                <p>Move: WASD</p>
+                <p>Look: MOUSE</p>
+            </div>
         </div>
-
     </div>
 
     <div id="optionsPanel">
-
         <h2>Elige una opción:</h2>
-        <button onclick="selectOption('opt1')">Opción 1</button>
-        <button onclick="selectOption('opt2')">Opción 2</button>
-        <button onclick="selectOption('opt3')">Opción 3</button>
-        <button onclick="selectOption('opt4')">Opción 4</button>
-
+        <button class="optionBtn" id="opt1" onclick="selectOption('opt1')"></button>
+        <button class="optionBtn" id="opt2" onclick="selectOption('opt2')"></button>
+        <button class="optionBtn" id="opt3" onclick="selectOption('opt3')"></button>
     </div>
 
 
-
+    <div>
     <!-- Canvas Points -->
     <div id="PanelPoints">
-        <span>Elige un color</span>
-        <!--<span id="points">0</span>-->
+        <span class="letter" style="color: red;">M</span>
+        <span class="letter" style="color: orange;">u</span>
+        <span class="letter" style="color: yellow;">s</span>
+        <span class="letter" style="color: green;">i</span>
+        <span class="letter" style="color: blue;">C</span>
+        <span class="letter" style="color: indigo;">o</span>
+        <span class="letter" style="color: violet;">l</span>
+        <span class="letter" style="color: pink;">o</span>
+        <span class="letter" style="color: purple;">r</span>
+        <span class="letter" style="color: teal;">s</span>
     </div>
+
+    <style>
+        #PanelPoints {
+            font-family: 'Outfit', sans-serif; 
+            font-size: 36px; 
+            font-weight: bold; 
+            text-align: center; 
+            
+            background-color: transparent; 
+        }
+    
+        .letter {
+            display: inline-block; 
+            transition: transform 0.3s; 
+            background-color: transparent; 
+        }
+    
+        .letter:hover {
+            transform: scale(1.2); 
+        }
+    </style>    
+    </div>
+
+    <div style="position: absolute;margin-top: 10px;z-index: 5;right: 1%; cursor: pointer;">
+        <img onclick="showInfoCreator()" src="./src/img/icon.png" alt="info" height="42" width="42">
+    </div>
+    <div id="myNameInfo" name="myNameInfo" style="position: absolute;margin-top: 10px;z-index: 4;right: 1%; cursor: pointer; display: none;">
+        <img src="./src/img/IconInfo2.png" alt="nameCreator" style="width: 62%;margin-top: 14%;margin-left: auto;">       
+    </div>
+    <style>
+        img {
+          display: block;
+          margin-left: auto;
+        }
+        </style>
+
+<div id="popup" style="display: none; position: absolute; background: white; border: 1px solid black; padding: 10px; z-index: 100; max-width: 200px;">
+    <img id="popupImage" src="" alt="Popup Image" style="width: 100%; height: auto;">
+</div>
+
 
     <!--Panel Win-->
     <div id="WinPanel" style="display: none;"></div>
